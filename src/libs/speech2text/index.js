@@ -1,26 +1,28 @@
 import speech from '@google-cloud/speech'
-import fs from 'fs'
-import path from 'path'
 import dotenv from 'dotenv'
 
 dotenv.config()
 export async function getTextFromClip () {
   const client = new speech.SpeechClient()
-  const filename = path.resolve('./src/media/videos/tv-report-short.mp3')
-  console.log(filename)
-  const file = fs.readFileSync(filename)
-  const audioBytes = file.toString('base64')
+  const uri = 'gs://testing1watafak/tv-report.mp3'
   const audio = {
-    content: audioBytes
+    uri
   }
   const config = {
     encoding: 'MP3',
     sampleRateHertz: 44100,
-    languageCode: 'bg-BG'
+    languageCode: 'bg-BG',
+    enableAutomaticPunctuation: true,
+    enableWordTimeOffsets: true
   }
-
-  const request = { audio, config }
-  const [response] = await client.recognize(request)
-  const transcription = response.results.map(r => r.alternatives[0].transcript).join('\n')
-  return transcription
+  const outputConfig = {
+    gcsUri: 'gs://testing1watafak/new-tv-report.json'
+  }
+  const request = {
+    audio,
+    config,
+    outputConfig
+  }
+  await client.longRunningRecognize(request)
+  return 'a'
 }
