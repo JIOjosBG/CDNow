@@ -1,9 +1,8 @@
-import { getTextFromClip } from "../libs/speech2text";
-import { express } from "express";
+import { getTextFromClip } from '../libs/speech2text/index.js'
+import express from 'express'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/get-subtitles',(req,res)=>res.send(getTextFromClip('a')))
-
+router.get('/transcribe', async (req, res) => res.send(await getTextFromClip()))
 
 export default router
